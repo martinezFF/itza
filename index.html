@@ -1,1 +1,661 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Invitación de Cumpleaños - Itza Moreno | Globos Mickey Mouse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
 
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f7e6c4 0%, #f0d9a8 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 10% 20%, rgba(0,0,0,0.08) 2%, transparent 2.5%);
+            background-size: 35px 35px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .envelope-scene {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            margin: 10px auto 5px auto;
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+
+        .envelope-scene.hide {
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8);
+            pointer-events: none;
+            height: 0;
+            margin: 0;
+            width: 0;
+            display: none;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #f7e05e;
+            border-radius: 12px 12px 8px 8px;
+            box-shadow: 0 15px 25px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,200,0.7);
+            overflow: hidden;
+        }
+
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #efd43a;
+            clip-path: polygon(0% 0%, 50% 55%, 100% 0%);
+            z-index: 15;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-origin: top;
+            cursor: pointer;
+            border-radius: 10px 10px 0 0;
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.05);
+        }
+
+        .invitation-label {
+            position: absolute;
+            bottom: 70px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-family: 'Segoe UI', 'Brush Script MT', 'Comic Sans MS', cursive;
+            font-style: italic;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #a1301c;
+            background: rgba(255, 240, 180, 0.9);
+            display: inline-block;
+            width: fit-content;
+            margin: 0 auto;
+            padding: 4px 12px;
+            border-radius: 40px;
+            backdrop-filter: blur(2px);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            letter-spacing: 0.5px;
+            z-index: 20;
+            pointer-events: none;
+            white-space: nowrap;
+            transform: translateX(-50%);
+            left: 50%;
+            bottom: 85px;
+        }
+
+        .envelope:before {
+            content: "❤️";
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            letter-spacing: 8px;
+            color: #c73d23;
+            opacity: 0.7;
+            z-index: 5;
+        }
+
+        .seal {
+            position: absolute;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 38px;
+            height: 38px;
+            background: #c73d23;
+            border-radius: 50%;
+            z-index: 20;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            font-family: monospace;
+            color: #ffdd99;
+            transition: 0.2s;
+            pointer-events: none;
+        }
+
+        .click-hint {
+            background: #ffe9b6;
+            border-radius: 60px;
+            padding: 8px 22px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #b13b26;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+            border: 2px solid #ffb347;
+            backdrop-filter: blur(3px);
+            font-family: inherit;
+            animation: softPulse 1.4s infinite ease-in-out;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes softPulse {
+            0% { transform: scale(1); background: #ffe9b6; }
+            50% { transform: scale(1.02); background: #ffdd99; box-shadow: 0 8px 18px rgba(0,0,0,0.15);}
+            100% { transform: scale(1); background: #ffe9b6; }
+        }
+
+        .click-hint.hide-hint {
+            display: none;
+        }
+
+        .invitation-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.6s ease 0.2s;
+            pointer-events: none;
+            margin-top: 0;
+        }
+
+        .invitation-wrapper.show {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .invitation-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            overflow: hidden;
+            text-align: center;
+            border: 4px solid #ffb347;
+            background: #fff9ef;
+            max-width: 100%;
+            width: 100%;
+            cursor: default;
+        }
+
+        .invitation-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 20px 20px 16px 16px;
+        }
+
+        .countdown-section {
+            background: #fff0cf;
+            border-radius: 40px;
+            padding: 12px 15px;
+            margin-top: 8px;
+            margin-bottom: 8px;
+            text-align: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            border: 2px solid #ffb347;
+            width: 100%;
+        }
+
+        .countdown-title {
+            font-size: 1rem;
+            color: #9b2e1e;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .time-box {
+            background: #9b2e1e;
+            color: white;
+            padding: 8px 8px;
+            border-radius: 16px;
+            min-width: 65px;
+            text-align: center;
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2), 0 3px 8px rgba(0,0,0,0.1);
+        }
+
+        .time-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            font-family: monospace;
+            display: block;
+            line-height: 1;
+        }
+
+        .time-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #25D366;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        .whatsapp-btn.show-whatsapp {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .whatsapp-btn:hover {
+            background: #128C7E;
+            transform: scale(1.02);
+        }
+
+        footer {
+            margin-top: 8px;
+            font-size: 10px;
+            color: rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        /* === GLOBO CON FORMA DE MICKEY MOUSE === */
+        .mickey-balloon {
+            position: fixed;
+            bottom: -120px;
+            pointer-events: none;
+            z-index: 9999;
+            filter: drop-shadow(3px 8px 15px rgba(0,0,0,0.3));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: floatUp linear forwards;
+        }
+
+        .mickey-shape {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mickey-head {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .mickey-ear-left {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            top: -15px;
+            left: -18px;
+            z-index: 0;
+        }
+
+        .mickey-ear-right {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            top: -15px;
+            right: -18px;
+            z-index: 0;
+        }
+
+        .balloon-string {
+            width: 2px;
+            height: 35px;
+            background: linear-gradient(180deg, #8B5A2B, #5a3a1a);
+            margin-top: 5px;
+            border-radius: 1px;
+        }
+
+        .mickey-head::before {
+            content: "";
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            width: 16px;
+            height: 16px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .mickey-ear-left::before {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 10px;
+            height: 10px;
+            background: rgba(255,255,255,0.35);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .mickey-ear-right::before {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 10px;
+            height: 10px;
+            background: rgba(255,255,255,0.35);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .balloon-red .mickey-head,
+        .balloon-red .mickey-ear-left,
+        .balloon-red .mickey-ear-right {
+            background: radial-gradient(circle at 35% 30%, #ff5e5e, #cc1111);
+        }
+        .balloon-yellow .mickey-head,
+        .balloon-yellow .mickey-ear-left,
+        .balloon-yellow .mickey-ear-right {
+            background: radial-gradient(circle at 35% 30%, #fff080, #e6b800);
+        }
+        .balloon-black .mickey-head,
+        .balloon-black .mickey-ear-left,
+        .balloon-black .mickey-ear-right {
+            background: radial-gradient(circle at 35% 30%, #5a5a5a, #1a1a1a);
+        }
+        .balloon-white .mickey-head,
+        .balloon-white .mickey-ear-left,
+        .balloon-white .mickey-ear-right {
+            background: radial-gradient(circle at 35% 30%, #ffffff, #e0e0e0);
+        }
+        .balloon-pink .mickey-head,
+        .balloon-pink .mickey-ear-left,
+        .balloon-pink .mickey-ear-right {
+            background: radial-gradient(circle at 35% 30%, #ffb6c1, #ff69b4);
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh) rotate(8deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .envelope-scene { width: 270px; height: 186px; }
+            .invitation-label { font-size: 0.7rem; bottom: 65px; padding: 2px 8px; white-space: nowrap; }
+            .click-hint { font-size: 0.75rem; padding: 5px 16px; gap: 6px; }
+            .time-box { min-width: 55px; padding: 6px 5px; }
+            .time-number { font-size: 1.4rem; }
+            .mickey-head { width: 55px; height: 55px; }
+            .mickey-ear-left, .mickey-ear-right { width: 33px; height: 33px; top: -12px; }
+            .mickey-ear-left { left: -14px; }
+            .mickey-ear-right { right: -14px; }
+            .balloon-string { height: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="envelope-scene" id="envelopeScene">
+        <div class="envelope">
+            <div class="flap" id="flap"></div>
+            <div class="seal">🐭</div>
+            <div class="invitation-label">✨ Itza Moreno ✨</div>
+        </div>
+    </div>
+
+    <div class="click-hint" id="clickHint">
+        <span>🎈</span> Itza, toca el sobre <span>👉</span>
+    </div>
+
+    <div class="countdown-section">
+        <div class="countdown-title">
+            <span>🎈</span> ¡Faltan para los 2 añitos de Amely! <span>🐭</span>
+        </div>
+        <div class="countdown-timer" id="countdownTimer">
+            <div class="time-box"><span class="time-number" id="days">00</span><span class="time-label">Días</span></div>
+            <div class="time-box"><span class="time-number" id="hours">00</span><span class="time-label">Horas</span></div>
+            <div class="time-box"><span class="time-number" id="minutes">00</span><span class="time-label">Minutos</span></div>
+            <div class="time-box"><span class="time-number" id="seconds">00</span><span class="time-label">Segundos</span></div>
+        </div>
+    </div>
+
+    <div class="invitation-wrapper" id="invitationWrapper">
+        <div class="invitation-card">
+            <img src="https://i.ibb.co/yTgHZpH/Copia-de-Mickey-Modelo-13.png" 
+                 alt="Invitación de Cumpleaños Amely 2 años - Mickey Mouse"
+                 style="width:100%; height:auto;">
+        </div>
+    </div>
+
+    <a href="https://wa.me/50558379422?text=¡Hola!%20Quiero%20confirmar%20mi%20asistencia%20a%20los%20dos%20añitos%20de%20Amely%20🎈🐭" 
+       class="whatsapp-btn" target="_blank" id="whatsappBtn">
+        <span>💬</span> Confirmar asistencia por WhatsApp <span>📱</span>
+    </a>
+
+    <footer>✨ Mickey Mouse Club · Jueves 28 de Mayo 2026 · 3:30 PM ✨<br>📍 Apali Nuevo, frente a Iglesia Cristo Viene</footer>
+</div>
+
+<script>
+    const targetDate = new Date(2026, 4, 28, 15, 30, 0);
+    const mickeyAudio = new Audio('https://www.soundjay.com/misc/sounds/mickey-mouse-laugh-02.mp3');
+    mickeyAudio.load();
+    mickeyAudio.volume = 0.8;
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = targetDate.getTime() - now;
+        if (distance < 0) {
+            document.getElementById('days').innerHTML = "00";
+            document.getElementById('hours').innerHTML = "00";
+            document.getElementById('minutes').innerHTML = "00";
+            document.getElementById('seconds').innerHTML = "00";
+            const titleDiv = document.querySelector('.countdown-title');
+            if (titleDiv && !titleDiv.innerHTML.includes('🎉')) {
+                titleDiv.innerHTML = '<span>🎉🎂</span> ¡YA LLEGÓ EL GRAN DÍA! <span>🐭🎈</span>';
+            }
+            return;
+        }
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        document.getElementById('days').innerHTML = days < 10 ? '0' + days : days;
+        document.getElementById('hours').innerHTML = hours < 10 ? '0' + hours : hours;
+        document.getElementById('minutes').innerHTML = minutes < 10 ? '0' + minutes : minutes;
+        document.getElementById('seconds').innerHTML = seconds < 10 ? '0' + seconds : seconds;
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    const envelopeScene = document.getElementById('envelopeScene');
+    const invitationWrapper = document.getElementById('invitationWrapper');
+    const whatsappBtn = document.getElementById('whatsappBtn');
+    const clickHint = document.getElementById('clickHint');
+    const flap = document.getElementById('flap');
+    let opened = false;
+    let balloonInterval = null;
+
+    const colorClasses = ['balloon-red', 'balloon-yellow', 'balloon-black', 'balloon-white', 'balloon-pink'];
+
+    function createMickeyShapedBalloon() {
+        const balloonContainer = document.createElement('div');
+        balloonContainer.classList.add('mickey-balloon');
+        const randomColor = colorClasses[Math.floor(Math.random() * colorClasses.length)];
+        balloonContainer.classList.add(randomColor);
+        
+        const shapeContainer = document.createElement('div');
+        shapeContainer.className = 'mickey-shape';
+        
+        const head = document.createElement('div');
+        head.className = 'mickey-head';
+        const earLeft = document.createElement('div');
+        earLeft.className = 'mickey-ear-left';
+        const earRight = document.createElement('div');
+        earRight.className = 'mickey-ear-right';
+        
+        shapeContainer.appendChild(earLeft);
+        shapeContainer.appendChild(earRight);
+        shapeContainer.appendChild(head);
+        
+        const string = document.createElement('div');
+        string.className = 'balloon-string';
+        
+        balloonContainer.appendChild(shapeContainer);
+        balloonContainer.appendChild(string);
+        
+        const scale = 0.7 + Math.random() * 0.8;
+        const headSize = 70 * scale;
+        const earSize = 42 * scale;
+        
+        head.style.width = headSize + 'px';
+        head.style.height = headSize + 'px';
+        
+        const leftEar = balloonContainer.querySelector('.mickey-ear-left');
+        const rightEar = balloonContainer.querySelector('.mickey-ear-right');
+        if (leftEar) {
+            leftEar.style.width = earSize + 'px';
+            leftEar.style.height = earSize + 'px';
+            leftEar.style.left = -(earSize * 0.48) + 'px';
+            leftEar.style.top = -(earSize * 0.32) + 'px';
+        }
+        if (rightEar) {
+            rightEar.style.width = earSize + 'px';
+            rightEar.style.height = earSize + 'px';
+            rightEar.style.right = -(earSize * 0.48) + 'px';
+            rightEar.style.top = -(earSize * 0.32) + 'px';
+        }
+        
+        const leftPos = Math.random() * 100;
+        const duration = 4 + Math.random() * 6;
+        const delay = Math.random() * 0.7;
+        const rotateStart = (Math.random() - 0.5) * 12;
+        
+        balloonContainer.style.left = leftPos + '%';
+        balloonContainer.style.animationDuration = duration + 's';
+        balloonContainer.style.animationDelay = delay + 's';
+        balloonContainer.style.transform = `rotate(${rotateStart}deg)`;
+        
+        document.body.appendChild(balloonContainer);
+        
+        setTimeout(() => {
+            if (balloonContainer && balloonContainer.parentNode) {
+                balloonContainer.remove();
+            }
+        }, (duration + delay) * 1000);
+    }
+    
+    function launchMickeyBalloons() {
+        let count = 0;
+        const totalBalloons = 38;
+        if (balloonInterval) clearInterval(balloonInterval);
+        balloonInterval = setInterval(() => {
+            if (count >= totalBalloons) {
+                clearInterval(balloonInterval);
+                return;
+            }
+            const balloonsPerWave = Math.min(2, totalBalloons - count);
+            for (let i = 0; i < balloonsPerWave; i++) {
+                createMickeyShapedBalloon();
+                count++;
+            }
+        }, 160);
+    }
+    
+    function abrirSobre() {
+        if (opened) return;
+        opened = true;
+        mickeyAudio.play().catch(error => console.log("Audio necesita interacción"));
+        launchMickeyBalloons();
+        envelopeScene.classList.add('hide');
+        if (clickHint) clickHint.classList.add('hide-hint');
+        invitationWrapper.classList.add('show');
+        whatsappBtn.classList.add('show-whatsapp');
+    }
+    
+    envelopeScene.addEventListener('click', function(e) {
+        if (envelopeScene.classList.contains('hide')) return;
+        abrirSobre();
+    });
+    flap.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (envelopeScene.classList.contains('hide')) return;
+        abrirSobre();
+    });
+    
+    console.log("🎈✨ Invitación para Itza Moreno - Globos con FORMA de Mickey Mouse");
+</script>
+</body>
+</html>
